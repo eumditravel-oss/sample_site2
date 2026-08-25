@@ -1,254 +1,141 @@
-/**
- * Design reference: a precise Korean contractor website reconstruction.
- * This file keeps a calm white header, construction-blue hierarchy, direct phone and email contact actions, a restrained Samsung C&T-inspired dropdown navigation, and optional image-led page banners.
- */
-import { Link, useLocation } from "wouter";
-import { ArrowUp, ArrowUpRight, ChevronDown, ChevronRight, Menu, Phone, X } from "lucide-react";
-import { useEffect, useRef, useState } from "react";
+import { company } from "@/config/company";
 import { assetPath } from "@/lib/assets";
+import { ArrowUp, ArrowUpRight, ChevronDown, Menu, X } from "lucide-react";
+import { useEffect, useRef, useState, type ReactNode } from "react";
+import { Link, useLocation } from "wouter";
 
-const navItems = [
-  {
-    label: "회사소개", href: "/company",
-    links: [{ label: "인사말", href: "/company" }, { label: "오시는길", href: "/location" }],
-  },
-  {
-    label: "서비스안내", href: "/services/scope",
-    links: [{ label: "공정 범위", href: "/services/scope" }, { label: "고객과의 약속", href: "/services/promise" }],
-  },
-  {
-    label: "온라인상담", href: "/consultation",
-    links: [{ label: "온라인상담", href: "/consultation" }, { label: "상담 리스트", href: "/consultation/list" }],
-  },
-  {
-    label: "공지사항", href: "/notices",
-    links: [{ label: "공지사항", href: "/notices" }, { label: "상담 전 확인사항", href: "/notices/pre-check" }],
-  },
-  {
-    label: "기술 소개", href: "/gallery",
-    links: [{ label: "기술 소개", href: "/gallery" }],
-  },
-];
-
-const subNavigation = {
-  company: { label: "회사소개", items: navItems[0].links },
-  services: { label: "서비스안내", items: navItems[1].links },
-  consultation: { label: "온라인상담", items: navItems[2].links },
-  notices: { label: "공지사항", items: navItems[3].links },
-  gallery: { label: "기술 소개", items: navItems[4].links },
-} as const;
+const navigation = [
+  { label: "COMPANY", title: "기업정보", href: "/company", links: [{ label: "회사소개", href: "/company" }, { label: "경영철학", href: "/company/philosophy" }] },
+  { label: "BUSINESS", title: "사업영역", href: "/business", links: [{ label: "토목", href: "/business/civil" }, { label: "건축", href: "/business/architecture" }, { label: "외부시설", href: "/business/field" }] },
+  { label: "PROJECT", title: "프로젝트", href: "/projects", links: [{ label: "프로젝트 아카이브", href: "/projects" }] },
+  { label: "QUALITY", title: "품질·안전", href: "/quality", links: [{ label: "품질관리", href: "/quality" }, { label: "안전관리", href: "/quality/safety" }] },
+  { label: "NEWS", title: "소식", href: "/news", links: [{ label: "공지사항", href: "/news" }] },
+  { label: "CONTACT", title: "프로젝트 문의", href: "/contact", links: [{ label: "프로젝트 문의", href: "/contact" }] },
+] as const;
 
 export function BrandMark({ inverse = false }: { inverse?: boolean }) {
   return (
-    <Link href="/" className={`brand-mark ${inverse ? "brand-mark--inverse" : ""}`} aria-label="동성건설 홈으로 이동">
-      <img src={assetPath(inverse ? "dongseong-logo-white.svg" : "dongseong-logo.svg")} alt="동성건설 주식회사" />
+    <Link href="/" className="s2-brand" aria-label={`${company.name} 홈`}>
+      <img src={assetPath(inverse ? "dongseong-logo-white.svg" : "dongseong-logo.svg")} alt={`${company.name} 로고`} />
     </Link>
   );
 }
 
 export function SiteHeader() {
-  const [open, setOpen] = useState(false);
-  const [activeMega, setActiveMega] = useState<number | null>(null);
-  const [location, setLocation] = useLocation();
-  const headerRef = useRef<HTMLElement>(null);
+  const [location] = useLocation();
+  const [mobileOpen, setMobileOpen] = useState(false);
+  const [scrolled, setScrolled] = useState(false);
+  const isHome = location === "/";
 
-  const closeMega = () => setActiveMega(null);
-  const toggleMega = (index: number) => setActiveMega((current) => current === index ? null : index);
-  const isPrimaryActive = (index: number) => {
-    if (index === 0) return location === "/company" || location === "/location";
-    if (index === 1) return location === "/services" || location.startsWith("/services/");
-    if (index === 2) return location === "/consultation" || location.startsWith("/consultation/");
-    if (index === 3) return location === "/notices" || location.startsWith("/notices/");
-    return location === "/gallery";
-  };
-  const navigateToPrimaryItem = (index: number) => {
-    closeMega();
-    setLocation(navItems[index].links[0].href);
-  };
   useEffect(() => {
-    const handleEscape = (event: KeyboardEvent) => {
-      if (event.key === "Escape") closeMega();
-    };
-    window.addEventListener("keydown", handleEscape);
-    return () => window.removeEventListener("keydown", handleEscape);
+    const update = () => setScrolled(window.scrollY > 28);
+    update();
+    window.addEventListener("scroll", update, { passive: true });
+    return () => window.removeEventListener("scroll", update);
   }, []);
 
   useEffect(() => {
-    if (!open) return;
-    const previousOverflow = document.body.style.overflow;
-    document.body.style.overflow = "hidden";
-    return () => { document.body.style.overflow = previousOverflow; };
-  }, [open]);
+    setMobileOpen(false);
+  }, [location]);
 
-  const handleHeaderBlur = (event: React.FocusEvent<HTMLElement>) => {
-    if (!headerRef.current?.contains(event.relatedTarget as Node | null)) closeMega();
-  };
+  useEffect(() => {
+    document.body.style.overflow = mobileOpen ? "hidden" : "";
+    return () => { document.body.style.overflow = ""; };
+  }, [mobileOpen]);
+
+  const active = (href: string) => href === "/" ? location === "/" : location === href || location.startsWith(`${href}/`);
+  const inverse = isHome && !scrolled;
 
   return (
-    <header
-      className={location === "/" ? "site-header site-header--home" : "site-header"}
-      ref={headerRef}
-      onMouseLeave={closeMega}
-      onBlur={handleHeaderBlur}
-      onKeyDown={(event) => { if (event.key === "Escape") closeMega(); }}
-    >
-      <div className="site-header__inner">
-        <BrandMark inverse={location === "/"} />
-        <nav className="desktop-nav" aria-label="주요 메뉴">
-          {navItems.map((item, index) => (
-            <div className={`desktop-nav__item ${activeMega === index ? "is-open" : ""}`} key={item.label} onMouseEnter={() => setActiveMega(index)}>
-              <button
-                type="button"
-                className={isPrimaryActive(index) || activeMega === index ? "is-active" : ""}
-                aria-expanded={activeMega === index}
-                aria-controls={`submenu-${index}`}
-                onFocus={() => setActiveMega(index)}
-                aria-haspopup="menu"
-                onClick={() => navigateToPrimaryItem(index)}
-              >
-                {item.label}<ChevronDown size={12} aria-hidden="true" />
-              </button>
-              <div id={`submenu-${index}`} className="desktop-nav__submenu" aria-hidden={activeMega !== index}>
-                {item.links.map((link) => <Link key={link.label} href={link.href} onClick={closeMega} role="menuitem">{link.label}</Link>)}
+    <header className={`s2-header ${inverse ? "is-overlay" : "is-solid"}`}>
+      <a className="s2-skip" href="#main-content">본문 바로가기</a>
+      <div className="s2-header__inner">
+        <BrandMark inverse={inverse} />
+        <nav className="s2-desktop-nav" aria-label="주요 메뉴">
+          {navigation.map((item) => (
+            <div className="s2-nav-item" key={item.label}>
+              <Link href={item.href} className={active(item.href) ? "is-active" : ""} aria-current={active(item.href) ? "page" : undefined}>
+                <span>{item.label}</span><small>{item.title}</small><ChevronDown size={13} aria-hidden="true" />
+              </Link>
+              <div className="s2-nav-item__panel">
+                {item.links.map((link) => <Link key={link.href} href={link.href}>{link.label}<ArrowUpRight size={13} /></Link>)}
               </div>
             </div>
           ))}
         </nav>
-        <button className="menu-button" type="button" onClick={() => setOpen(true)} aria-label="메뉴 열기">
-          <Menu size={25} />
-        </button>
+        <button className="s2-menu-button" type="button" onClick={() => setMobileOpen(true)} aria-label="전체 메뉴 열기"><Menu /></button>
       </div>
 
-      {open && (
-        <div className="mobile-nav-panel" role="dialog" aria-modal="true" aria-label="모바일 메뉴">
-          <div className="mobile-nav-panel__top">
-            <BrandMark inverse />
-            <button className="menu-button" type="button" onClick={() => setOpen(false)} aria-label="메뉴 닫기">
-              <X size={26} />
-            </button>
-          </div>
-          <p className="mobile-nav-panel__label">MENU</p>
-          <nav aria-label="모바일 주요 메뉴">
-            {navItems.map((item, index) => (
-              <div className="mobile-nav-group" key={item.label}>
-                <button type="button" onClick={() => toggleMega(index)} aria-expanded={activeMega === index}>
-                  {item.label}<ChevronDown size={20} />
-                </button>
-                <div className={activeMega === index ? "mobile-nav-sub is-open" : "mobile-nav-sub"}>
-                  {item.links.map((link) => <Link key={link.label} href={link.href} onClick={() => setOpen(false)}>{link.label}<ChevronRight size={14} /></Link>)}
-                </div>
-              </div>
-            ))}
-          </nav>
-          <a className="mobile-nav-panel__contact" href="tel:010-0000-0000"><Phone size={17} /> 빠른 전화 문의 <b>010-0000-0000</b></a>
-        </div>
-      )}
+      <div className={`s2-mobile-menu ${mobileOpen ? "is-open" : ""}`} aria-hidden={!mobileOpen}>
+        <div className="s2-mobile-menu__top"><BrandMark inverse /><button type="button" onClick={() => setMobileOpen(false)} aria-label="전체 메뉴 닫기"><X /></button></div>
+        <p>PROJECT-DRIVEN CONSTRUCTION</p>
+        <nav aria-label="모바일 주요 메뉴">
+          {navigation.map((item, index) => (
+            <div key={item.label}>
+              <span>0{index + 1}</span>
+              <Link href={item.href}>{item.label}<small>{item.title}</small></Link>
+              <div>{item.links.map((link) => <Link key={link.href} href={link.href}>{link.label}</Link>)}</div>
+            </div>
+          ))}
+        </nav>
+      </div>
     </header>
-  );
-}
-
-export function PhoneAside() {
-  return (
-    <aside className="phone-aside">
-      <span className="eyebrow">PHONE CONSULTATION</span>
-      <strong>빠른 문의 안내</strong>
-      <a href="tel:010-0000-0000">010-0000-0000</a>
-      <p>현장 조건과 일정에 맞춰<br />빠르게 안내해 드립니다.</p>
-    </aside>
-  );
-}
-
-export function SubNavigation({ section }: { section: keyof typeof subNavigation }) {
-  const [location] = useLocation();
-  const menu = subNavigation[section];
-  return (
-    <aside className="sub-navigation" aria-label={`${menu.label} 내부 메뉴`}>
-      <div className="sub-navigation__header">
-        <span>SECTION</span>
-        <strong>{menu.label}</strong>
-      </div>
-      <nav>
-        {menu.items.map((item) => {
-          const isActive = item.href === location;
-          return <Link key={item.label} href={item.href} className={isActive ? "is-active" : ""}>{item.label}<ChevronRight size={15} /></Link>;
-        })}
-      </nav>
-    </aside>
-  );
-}
-
-export function PageTitle({ title, subtitle, crumbs, image }: { title: string; subtitle: string; crumbs?: string; image?: string }) {
-  return (
-    <section className={`page-title ${image ? "page-title--image" : ""}`} style={image ? { backgroundImage: `url(${assetPath(image)})` } : undefined}>
-      <div className="page-title__inner">
-        <p className="eyebrow">{subtitle}</p>
-        <h1>{title}</h1>
-        <p className="breadcrumbs">홈 <span>/</span> {crumbs ?? title}</p>
-      </div>
-    </section>
   );
 }
 
 export function SiteFooter() {
   return (
-    <footer className="site-footer">
-      <div className="footer-inquiry">
-        <div className="footer-inquiry__copy">
-          <span>START A PROJECT</span>
-          <h2>새로운 현장의 시작,<br />동성건설과 상의하세요.</h2>
-        </div>
-        <Link href="/consultation" className="footer-inquiry__link">
-          <span>프로젝트 문의하기</span><ArrowUpRight size={30} aria-hidden="true" />
-        </Link>
+    <footer className="s2-footer">
+      <div className="s2-footer__cta">
+        <p>PROJECT INQUIRY</p>
+        <h2>다음 프로젝트의 기준을<br />함께 세웁니다.</h2>
+        <Link href="/contact">문의 준비하기 <ArrowUpRight /></Link>
       </div>
-      <div className="footer-main">
-        <div className="footer-main__identity">
-          <BrandMark />
-          <p>기준을 지키는 시공,<br />현장에 남는 신뢰.</p>
-        </div>
-        <div className="footer-main__contact">
-          <span>OFFICE</span>
-          <address>서울특별시 ○○구 현장로 24, 202호</address>
-          <a href="tel:010-0000-0000">010-0000-0000</a>
-          <a href="mailto:contact@dongseong-con.co.kr">contact@dongseong-con.co.kr</a>
-        </div>
-        <nav className="footer-main__nav" aria-label="하단 메뉴">
-          <Link href="/company">회사소개</Link>
-          <Link href="/services/scope">사업영역</Link>
-          <Link href="/gallery">기술소개</Link>
-          <Link href="/notices">공지사항</Link>
-        </nav>
-        <button className="footer-top" type="button" onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })} aria-label="맨 위로 이동">
-          <ArrowUp size={22} /><span>BACK TO TOP</span>
-        </button>
+      <div className="s2-footer__body">
+        <div><BrandMark /><p>{company.nameEn}</p></div>
+        <dl>
+          <div><dt>CONTACT</dt><dd>{company.phone ?? "대표번호 등록 준비 중"}</dd></div>
+          <div><dt>E-MAIL</dt><dd>{company.email ?? "대표 이메일 등록 준비 중"}</dd></div>
+          <div><dt>OFFICE</dt><dd>{company.address ?? "사업장 정보 등록 준비 중"}</dd></div>
+        </dl>
+        <nav aria-label="하단 메뉴"><Link href="/company">Company</Link><Link href="/business">Business</Link><Link href="/projects">Project</Link><Link href="/privacy">Privacy</Link></nav>
+        <button type="button" onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })} aria-label="맨 위로 이동"><ArrowUp /><span>TOP</span></button>
       </div>
-      <div className="footer-bottom">
-        <small>© DONGSEONG CONSTRUCTION CO., LTD.</small>
-        <div>
-          <a href="#privacy">개인정보처리방침</a>
-          <a href="#terms">이용약관</a>
-          <a href="#email">이메일무단수집거부</a>
-        </div>
-      </div>
+      <div className="s2-footer__legal"><small>{company.copyright}</small><span>등록되지 않은 회사 정보는 임의로 표시하지 않습니다.</span></div>
     </footer>
   );
 }
 
-export function SiteFrame({ children }: { children: React.ReactNode }) {
+export function SiteFrame({ children }: { children: ReactNode }) {
   const [location] = useLocation();
-  const isServiceRoute = location === "/services" || location.startsWith("/services/");
+  useEffect(() => { window.scrollTo({ top: 0, left: 0, behavior: "auto" }); }, [location]);
+  return <div className="s2-site"><SiteHeader /><main id="main-content">{children}</main><SiteFooter /></div>;
+}
 
-  useEffect(() => {
-    window.scrollTo({ top: 0, left: 0, behavior: "auto" });
-    document.documentElement.scrollTop = 0;
-    document.body.scrollTop = 0;
-  }, [location]);
-
+export function PageHero({ index, eyebrow, title, description, image }: { index: string; eyebrow: string; title: string; description: string; image: string }) {
   return (
-    <div className="site-frame">
-      <SiteHeader />
-      <main key={isServiceRoute ? location : undefined} className={isServiceRoute ? "site-frame__main site-frame__main--service" : "site-frame__main"}>{children}</main>
-      <SiteFooter />
-    </div>
+    <section className="s2-page-hero">
+      <img src={assetPath(image)} alt="" />
+      <div className="s2-page-hero__veil" />
+      <div className="s2-page-hero__copy"><span>{index}</span><p>{eyebrow}</p><h1>{title}</h1><strong>{description}</strong></div>
+      <div className="s2-page-hero__mark">DONGSEONG<br />CONSTRUCTION</div>
+    </section>
   );
+}
+
+export function SectionNav({ items }: { items: Array<{ label: string; href: string }> }) {
+  const [location] = useLocation();
+  return <nav className="s2-section-nav" aria-label="페이지 섹션">{items.map((item, index) => <Link key={item.href} href={item.href} className={location === item.href ? "is-active" : ""}><span>0{index + 1}</span>{item.label}</Link>)}</nav>;
+}
+
+export function Reveal({ children, className = "" }: { children: ReactNode; className?: string }) {
+  const ref = useRef<HTMLDivElement>(null);
+  useEffect(() => {
+    const element = ref.current;
+    if (!element) return;
+    const observer = new IntersectionObserver(([entry]) => { if (entry.isIntersecting) { element.classList.add("is-visible"); observer.disconnect(); } }, { threshold: .15 });
+    observer.observe(element);
+    return () => observer.disconnect();
+  }, []);
+  return <div ref={ref} className={`s2-reveal ${className}`}>{children}</div>;
 }

@@ -1,70 +1,148 @@
-import { ArrowDown, ArrowLeft, ArrowRight, Building2, Factory, HardHat, MoveUpRight } from "lucide-react";
-import type { CSSProperties } from "react";
-import { Link } from "wouter";
-import { SiteFrame } from "@/components/SiteShell";
+import { Reveal, SiteFrame } from "@/components/SiteShell";
+import { categoryLabel, projectArchive } from "@/data/projects";
+import { usePageMeta } from "@/hooks/usePageMeta";
 import { assetPath } from "@/lib/assets";
+import { ArrowDown, ArrowLeft, ArrowRight, ArrowUpRight, Building2, Factory, HardHat, Pause, Play } from "lucide-react";
+import { useEffect, useRef, useState, type CSSProperties } from "react";
+import { Link } from "wouter";
 
-const projects = [
-  { category: "CIVIL WORKS", title: "도시 기반 정비 공사", image: "/field-01.jpg" },
-  { category: "ARCHITECTURAL WORKS", title: "건축 구조 시공", image: "/field-02.jpg" },
-  { category: "FIELD ENGINEERING", title: "정밀 공정 관리", image: "/field-03.jpg" },
+const heroSlides = [
+  { image: "/field-01.jpg", eyebrow: "INFRASTRUCTURE", title: <>도시를 움직이는<br /><strong>기반을 구축합니다.</strong></>, description: "프로젝트의 조건을 읽고, 시공 전 과정의 완성도를 관리합니다.", href: "/business/civil" },
+  { image: "/field-02.jpg", eyebrow: "ENGINEERING", title: <>공간의 가치를 높이는<br /><strong>정밀한 엔지니어링.</strong></>, description: "구조와 공정, 품질 기준을 하나의 실행 체계로 연결합니다.", href: "/business/architecture" },
+  { image: "/field-03.jpg", eyebrow: "FIELD CONTROL", title: <>현장의 마지막까지<br /><strong>책임으로 완성합니다.</strong></>, description: "안전과 품질을 우선에 두고 프로젝트의 마감 기준을 지킵니다.", href: "/quality" },
 ];
 
-const news = [
-  { title: "현장 상담 전 확인하면 좋은 안내 사항입니다.", date: "2026.08.18" },
-  { title: "작업 가능 지역과 공정별 일정 안내", date: "2026.08.12" },
-  { title: "안전한 현장 진행을 위한 동성건설의 약속", date: "2026.08.04" },
-];
+function useReducedMotion() {
+  const [reduced, setReduced] = useState(false);
+  useEffect(() => {
+    const query = window.matchMedia("(prefers-reduced-motion: reduce)");
+    const update = () => setReduced(query.matches);
+    update();
+    query.addEventListener("change", update);
+    return () => query.removeEventListener("change", update);
+  }, []);
+  return reduced;
+}
 
 export default function Home() {
+  usePageMeta("도시의 기반을 구축하는 건설사", "프로젝트·엔지니어링·현장관리 중심의 동성건설 기업 웹사이트");
+  const reducedMotion = useReducedMotion();
+  const [heroIndex, setHeroIndex] = useState(0);
+  const [heroPaused, setHeroPaused] = useState(false);
+  const [heroHovered, setHeroHovered] = useState(false);
+  const [heroFocused, setHeroFocused] = useState(false);
+  const [projectIndex, setProjectIndex] = useState(0);
+  const pointerStart = useRef<number | null>(null);
+  const projectRail = useRef<HTMLDivElement>(null);
+
+  const moveHero = (direction: number) => setHeroIndex((current) => (current + direction + heroSlides.length) % heroSlides.length);
+  const moveProject = (next: number) => {
+    const index = (next + projectArchive.length) % projectArchive.length;
+    setProjectIndex(index);
+    const card = projectRail.current?.children[index] as HTMLElement | undefined;
+    card?.scrollIntoView({ behavior: reducedMotion ? "auto" : "smooth", inline: "center", block: "nearest" });
+  };
+
+  useEffect(() => {
+    if (reducedMotion || heroPaused || heroHovered || heroFocused) return;
+    const timer = window.setInterval(() => moveHero(1), 6200);
+    return () => window.clearInterval(timer);
+  }, [heroFocused, heroHovered, heroPaused, reducedMotion]);
+
+  const finishSwipe = (clientX: number) => {
+    if (pointerStart.current === null) return;
+    const distance = clientX - pointerStart.current;
+    if (Math.abs(distance) > 45) moveHero(distance > 0 ? -1 : 1);
+    pointerStart.current = null;
+  };
+
+  const syncProjectScroll = () => {
+    const rail = projectRail.current;
+    if (!rail || window.innerWidth > 760) return;
+    const cards = Array.from(rail.children) as HTMLElement[];
+    const center = rail.scrollLeft + rail.clientWidth / 2;
+    const closest = cards.reduce((best, card, index) => {
+      const distance = Math.abs(card.offsetLeft + card.offsetWidth / 2 - center);
+      return distance < best.distance ? { index, distance } : best;
+    }, { index: 0, distance: Number.POSITIVE_INFINITY });
+    setProjectIndex(closest.index);
+  };
+
   return (
     <SiteFrame>
-      <section className="gg-hero">
-        <img src={assetPath("field-01.jpg")} alt="동성건설 토목 기반 공사 현장" />
-        <div className="gg-hero__veil" />
-        <div className="gg-hero__copy">
-          <p>BUILDING A BETTER GROUND</p>
-          <h1>사람과 도시를 잇는<br /><strong>단단한 기반</strong></h1>
-          <span>현장을 이해하는 기술과 끝까지 지키는 책임으로<br />더 나은 생활의 토대를 만듭니다.</span>
-          <Link href="/company">More View <ArrowRight size={18} /></Link>
+      <section
+        className="s2-home-hero"
+        tabIndex={0}
+        aria-label="주요 사업 소개 슬라이드"
+        onMouseEnter={() => setHeroHovered(true)}
+        onMouseLeave={() => setHeroHovered(false)}
+        onFocusCapture={() => setHeroFocused(true)}
+        onBlurCapture={(event) => { if (!event.currentTarget.contains(event.relatedTarget as Node | null)) setHeroFocused(false); }}
+        onKeyDown={(event) => { if (event.key === "ArrowLeft") moveHero(-1); if (event.key === "ArrowRight") moveHero(1); }}
+        onPointerDown={(event) => { pointerStart.current = event.clientX; }}
+        onPointerUp={(event) => finishSwipe(event.clientX)}
+        onPointerCancel={() => { pointerStart.current = null; }}
+      >
+        <div className="s2-home-hero__media">
+          {heroSlides.map((slide, index) => <img key={slide.image} className={index === heroIndex ? "is-active" : ""} src={assetPath(slide.image)} alt="" aria-hidden={index !== heroIndex} />)}
         </div>
-        <div className="gg-hero__pager"><button type="button" aria-label="이전 이미지"><ArrowLeft /></button><b>01</b><i /><span>03</span><button type="button" aria-label="다음 이미지"><ArrowRight /></button></div>
-        <div className="gg-hero__scroll"><ArrowDown size={18} /><span>SCROLL DOWN</span></div>
+        <div className="s2-home-hero__veil" />
+        <div className="s2-home-hero__copy" key={heroIndex} aria-live="polite">
+          <p>{heroSlides[heroIndex].eyebrow}</p>
+          <h1>{heroSlides[heroIndex].title}</h1>
+          <span>{heroSlides[heroIndex].description}</span>
+          <Link href={heroSlides[heroIndex].href}>View capability <ArrowUpRight /></Link>
+        </div>
+        <div className="s2-home-hero__controls">
+          <button type="button" onClick={() => moveHero(-1)} aria-label="이전 슬라이드"><ArrowLeft /></button>
+          <b aria-label={`현재 ${heroIndex + 1}번째 슬라이드`}>{String(heroIndex + 1).padStart(2, "0")}</b>
+          <div className="s2-home-hero__progress" aria-hidden="true"><i style={{ width: `${((heroIndex + 1) / heroSlides.length) * 100}%` }} /></div>
+          <span>{String(heroSlides.length).padStart(2, "0")}</span>
+          <button type="button" onClick={() => moveHero(1)} aria-label="다음 슬라이드"><ArrowRight /></button>
+          <button type="button" className="s2-home-hero__pause" onClick={() => setHeroPaused((paused) => !paused)} aria-label={heroPaused ? "슬라이드 자동 재생" : "슬라이드 자동 재생 일시정지"} aria-pressed={heroPaused}>
+            {heroPaused ? <Play /> : <Pause />}
+          </button>
+        </div>
+        <div className="s2-home-hero__scroll"><ArrowDown /><span>SCROLL</span></div>
       </section>
 
-      <section className="gg-projects">
-        <header className="gg-section-title"><h2>PROJECT</h2><p>현장에서 쌓은 기술과 책임으로 완성한 동성건설의 주요 공정입니다.</p></header>
-        <div className="gg-projects__rail">
-          {projects.map((project, index) => (
-            <Link href="/gallery" className="gg-project-card" key={project.title}>
-              <figure><img src={assetPath(project.image)} alt={`${project.title} 현장`} /></figure>
-              <div><span>{project.category}</span><h3>{project.title}</h3><b>0{index + 1}</b><MoveUpRight size={20} /></div>
+      <section className="s2-projects-home">
+        <Reveal className="s2-projects-home__header">
+          <div><p>PROJECT ARCHIVE</p><h2>PROJECT</h2></div>
+          <div><span>실제 프로젝트 정보가 등록되면 이 아카이브에 공개됩니다.</span><Link href="/projects">프로젝트 보기 <ArrowUpRight /></Link></div>
+        </Reveal>
+        <div className="s2-projects-home__rail" ref={projectRail} onScroll={syncProjectScroll}>
+          {projectArchive.map((project, index) => (
+            <Link href="/projects" key={project.id} className={`s2-project-card ${index === projectIndex ? "is-current" : ""}`} aria-current={index === projectIndex ? "true" : undefined}>
+              <figure><img src={assetPath(project.thumbnail)} alt="" /><span>자료 준비 중</span></figure>
+              <div><p>0{index + 1} / {categoryLabel[project.category]}</p><h3>{project.title}</h3><small>{project.summary}</small><ArrowUpRight /></div>
             </Link>
           ))}
         </div>
-        <div className="gg-projects__controls"><button type="button" aria-label="이전 프로젝트"><ArrowLeft /></button><span>01</span><i /><b>03</b><button type="button" aria-label="다음 프로젝트"><ArrowRight /></button></div>
-      </section>
-
-      <section className="gg-business">
-        <header className="gg-section-title gg-section-title--light"><h2>Business Area</h2><p>도시의 기반에서 생활의 공간까지, 동성건설이 책임 있게 수행합니다.</p></header>
-        <div className="gg-business__grid">
-          <Link href="/services/scope" className="gg-business-card" style={{ "--business-image": `url(${assetPath("field-01.jpg")})` } as CSSProperties}><HardHat size={35} /><span>01</span><h3>토목</h3><p>대한민국의 생활과 도시의 흐름을<br />더 안전하고 풍요롭게</p><strong>CIVIL WORKS</strong><b>자세히 보기 <ArrowRight size={17} /></b></Link>
-          <Link href="/services/scope" className="gg-business-card" style={{ "--business-image": `url(${assetPath("field-02.jpg")})` } as CSSProperties}><Building2 size={35} /><span>02</span><h3>건축</h3><p>사람이 머무는 공간을<br />더 편리하고 쾌적하게</p><strong>ARCHITECTURAL WORKS</strong><b>자세히 보기 <ArrowRight size={17} /></b></Link>
-          <Link href="/services/scope" className="gg-business-card" style={{ "--business-image": `url(${assetPath("field-03.jpg")})` } as CSSProperties}><Factory size={35} /><span>03</span><h3>외부 시설</h3><p>도로와 건축을 연결하는 환경을<br />더 정교하고 오래도록</p><strong>FIELD WORKS</strong><b>자세히 보기 <ArrowRight size={17} /></b></Link>
+        <div className="s2-projects-home__controls">
+          <button type="button" onClick={() => moveProject(projectIndex - 1)} aria-label="이전 프로젝트"><ArrowLeft /></button>
+          <b>{String(projectIndex + 1).padStart(2, "0")}</b><i /><span>{String(projectArchive.length).padStart(2, "0")}</span>
+          <button type="button" onClick={() => moveProject(projectIndex + 1)} aria-label="다음 프로젝트"><ArrowRight /></button>
         </div>
       </section>
 
-      <section className="gg-news">
-        <div className="gg-news__lead"><header className="gg-section-title"><h2>News</h2><p>동성건설의 새로운 소식과 현장 안내를 전합니다.</p></header><Link href="/notices">전체 소식 보기 <ArrowRight size={17} /></Link></div>
-        <div className="gg-news__list">
-          {news.map((item, index) => <Link href="/notices" key={item.title}><span>0{index + 1}</span><h3>{item.title}</h3><time>{item.date}</time><MoveUpRight size={18} /></Link>)}
+      <section className="s2-business-home">
+        <Reveal className="s2-business-home__title"><p>CORE CAPABILITY</p><h2>Business Area</h2><span>프로젝트의 목적과 현장 조건에 맞춰 핵심 사업영역을 연결합니다.</span></Reveal>
+        <div className="s2-business-home__grid">
+          <Link href="/business/civil" style={{ "--area-image": `url(${assetPath("field-01.jpg")})` } as CSSProperties}><span>01</span><HardHat /><h3>CIVIL</h3><p>도시 기반과 이동 환경을 구축하는 토목 영역</p><b>Explore <ArrowUpRight /></b></Link>
+          <Link href="/business/architecture" style={{ "--area-image": `url(${assetPath("field-02.jpg")})` } as CSSProperties}><span>02</span><Building2 /><h3>ARCHITECTURE</h3><p>구조와 공간의 완성도를 높이는 건축 영역</p><b>Explore <ArrowUpRight /></b></Link>
+          <Link href="/business/field" style={{ "--area-image": `url(${assetPath("field-03.jpg")})` } as CSSProperties}><span>03</span><Factory /><h3>FIELD</h3><p>현장의 연결과 마감을 책임지는 외부시설 영역</p><b>Explore <ArrowUpRight /></b></Link>
         </div>
       </section>
 
-      <section className="gg-quick">
-        <Link href="/consultation"><small>ONLINE</small><h3>온라인 상담</h3><p>현장 위치와 필요한 공정을 남겨주세요.</p><ArrowRight /></Link>
-        <Link href="/services/promise"><small>STANDARD</small><h3>고객과의 약속</h3><p>과정을 투명하게, 마무리를 책임 있게.</p><ArrowRight /></Link>
-        <Link href="/location"><small>CONTACT</small><h3>오시는 길</h3><p>동성건설의 위치와 연락처를 안내합니다.</p><ArrowRight /></Link>
+      <section className="s2-news-home">
+        <Reveal><p>NEWSROOM</p><h2>새로운 소식</h2><span>현재 등록된 공지사항이 없습니다.</span><Link href="/news">Newsroom <ArrowUpRight /></Link></Reveal>
+        <div className="s2-news-home__empty"><b>NO POST</b><p>확인되지 않은 소식을 임의로 게시하지 않습니다.</p></div>
+      </section>
+
+      <section className="s2-transition-links">
+        <Link href="/quality"><small>01 / STANDARD</small><h3>품질과 안전의 기준</h3><ArrowUpRight /></Link>
+        <Link href="/contact"><small>02 / INQUIRY</small><h3>프로젝트 문의 준비</h3><ArrowUpRight /></Link>
       </section>
     </SiteFrame>
   );

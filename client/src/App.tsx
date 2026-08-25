@@ -1,65 +1,55 @@
-import { Toaster } from "@/components/ui/sonner";
-import { TooltipProvider } from "@/components/ui/tooltip";
+import ErrorBoundary from "@/components/ErrorBoundary";
+import Business from "@/pages/Business";
 import Company from "@/pages/Company";
-import Consultation from "@/pages/Consultation";
-import ConsultationList from "@/pages/ConsultationList";
-import Gallery from "@/pages/Gallery";
-import Location from "@/pages/Location";
-import Notices from "@/pages/Notices";
+import Contact from "@/pages/Contact";
+import Home from "@/pages/Home";
+import News from "@/pages/News";
 import NotFound from "@/pages/NotFound";
-import PreConsultation from "@/pages/PreConsultation";
-import ServicePromise from "@/pages/ServicePromise";
-import ServiceScope from "@/pages/ServiceScope";
-import { Route, Router as WouterRouter, Switch } from "wouter";
-import ErrorBoundary from "./components/ErrorBoundary";
-import { ThemeProvider } from "./contexts/ThemeContext";
-import Home from "./pages/Home";
+import Privacy from "@/pages/Privacy";
+import Projects from "@/pages/Projects";
+import Quality from "@/pages/Quality";
+import { Route, Router, Switch } from "wouter";
 
-function Router() {
-  // make sure to consider if you need authentication for certain routes
+function Routes() {
   return (
     <Switch>
-      <Route path={"/"} component={Home} />
-      <Route path={"/company"} component={Company} />
-      <Route path={"/services"} component={ServiceScope} />
-      <Route path={"/services/scope"} component={ServiceScope} />
-      <Route path={"/services/promise"} component={ServicePromise} />
-      <Route path={"/consultation/list"} component={ConsultationList} />
-      <Route path={"/consultation"} component={Consultation} />
-      <Route path={"/notices/pre-check"} component={PreConsultation} />
-      <Route path={"/notices"} component={Notices} />
-      <Route path={"/gallery"} component={Gallery} />
-      <Route path={"/location"} component={Location} />
-      <Route path={"/404"} component={NotFound} />
-      {/* Final fallback route */}
+      <Route path="/" component={Home} />
+      <Route path="/company" component={Company} />
+      <Route path="/company/philosophy" component={Company} />
+      <Route path="/business" component={Business} />
+      <Route path="/business/civil" component={Business} />
+      <Route path="/business/architecture" component={Business} />
+      <Route path="/business/field" component={Business} />
+      <Route path="/projects" component={Projects} />
+      <Route path="/quality" component={Quality} />
+      <Route path="/quality/safety" component={Quality} />
+      <Route path="/news" component={News} />
+      <Route path="/contact" component={Contact} />
+      <Route path="/privacy" component={Privacy} />
+
+      {/* Legacy URLs remain readable but render the new SITE 2 information architecture. */}
+      <Route path="/services" component={Business} />
+      <Route path="/services/scope" component={Business} />
+      <Route path="/services/promise" component={Quality} />
+      <Route path="/gallery" component={Projects} />
+      <Route path="/consultation" component={Contact} />
+      <Route path="/consultation/list" component={Contact} />
+      <Route path="/notices" component={News} />
+      <Route path="/notices/pre-check" component={Quality} />
+      <Route path="/location" component={Contact} />
+      <Route path="/404" component={NotFound} />
       <Route component={NotFound} />
     </Switch>
   );
 }
 
-// NOTE: About Theme
-// - First choose a default theme according to your design style (dark or light bg), than change color palette in index.css
-//   to keep consistent foreground/background color across components
-// - If you want to make theme switchable, pass `switchable` ThemeProvider and use `useTheme` hook
-
-function App() {
-  const routerBase = import.meta.env.BASE_URL.replace(/\/$/, "") || "/";
-
+export default function App() {
+  const base = import.meta.env.BASE_URL.replace(/\/$/, "") || "/";
   return (
     <ErrorBoundary>
-      <ThemeProvider
-        defaultTheme="light"
-        // switchable
-      >
-        <TooltipProvider>
-          <Toaster />
-          <WouterRouter base={routerBase}>
-            <Router />
-          </WouterRouter>
-        </TooltipProvider>
-      </ThemeProvider>
+      <Router base={base}>
+        <Routes />
+      </Router>
     </ErrorBoundary>
   );
 }
-
-export default App;
