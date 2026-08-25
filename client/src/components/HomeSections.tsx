@@ -6,11 +6,12 @@ import { useEffect, useRef, useState, type CSSProperties, type ReactNode } from 
 import { Link, useLocation } from "wouter";
 import { toast } from "sonner";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { assetPath } from "@/lib/assets";
 
 const heroImages = [
-  "/field-01.jpg",
-  "/field-02.jpg",
-  "/field-03.jpg",
+  assetPath("field-01.jpg"),
+  assetPath("field-02.jpg"),
+  assetPath("field-03.jpg"),
 ];
 
 const serviceCards = [

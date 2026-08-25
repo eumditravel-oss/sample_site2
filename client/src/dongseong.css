@@ -669,9 +669,7 @@ body::selection { background: var(--ds-acid); color: var(--ds-ink); }
 .gg-business-card:last-child { border-right: 0; }
 .gg-business-card::before,.gg-business-card::after { content: ""; position: absolute; inset: 0; z-index: -2; background-position: center; background-size: cover; transition: transform .8s cubic-bezier(.2,.8,.2,1),filter .4s ease; }
 .gg-business-card::after { z-index: -1; background: rgba(14,20,24,.64); }
-.gg-business-card--civil::before { background-image: url("/field-01.jpg"); }
-.gg-business-card--architecture::before { background-image: url("/field-02.jpg"); }
-.gg-business-card--plant::before { background-image: url("/field-03.jpg"); }
+.gg-business-card::before { background-image: var(--business-image); }
 .gg-business-card:hover::before { transform: scale(1.06); filter: saturate(1.1); }
 .gg-business-card:hover::after { background: rgba(184,95,59,.74); }
 .gg-business-card > svg { color: var(--ds-acid); }

@@ -10,7 +10,7 @@ import NotFound from "@/pages/NotFound";
 import PreConsultation from "@/pages/PreConsultation";
 import ServicePromise from "@/pages/ServicePromise";
 import ServiceScope from "@/pages/ServiceScope";
-import { Route, Switch } from "wouter";
+import { Route, Router as WouterRouter, Switch } from "wouter";
 import ErrorBoundary from "./components/ErrorBoundary";
 import { ThemeProvider } from "./contexts/ThemeContext";
 import Home from "./pages/Home";
@@ -43,6 +43,8 @@ function Router() {
 // - If you want to make theme switchable, pass `switchable` ThemeProvider and use `useTheme` hook
 
 function App() {
+  const routerBase = import.meta.env.BASE_URL.replace(/\/$/, "") || "/";
+
   return (
     <ErrorBoundary>
       <ThemeProvider
@@ -51,7 +53,9 @@ function App() {
       >
         <TooltipProvider>
           <Toaster />
-          <Router />
+          <WouterRouter base={routerBase}>
+            <Router />
+          </WouterRouter>
         </TooltipProvider>
       </ThemeProvider>
     </ErrorBoundary>

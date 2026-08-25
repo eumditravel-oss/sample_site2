@@ -5,6 +5,7 @@
 import { Link, useLocation } from "wouter";
 import { ArrowUp, ArrowUpRight, ChevronDown, ChevronRight, Menu, Phone, X } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
+import { assetPath } from "@/lib/assets";
 
 const navItems = [
   {
@@ -40,7 +41,7 @@ const subNavigation = {
 export function BrandMark({ inverse = false }: { inverse?: boolean }) {
   return (
     <Link href="/" className={`brand-mark ${inverse ? "brand-mark--inverse" : ""}`} aria-label="동성건설 홈으로 이동">
-      <img src="/dongseong-logo.svg" alt="동성건설 주식회사" />
+      <img src={assetPath("dongseong-logo.svg")} alt="동성건설 주식회사" />
     </Link>
   );
 }
@@ -178,7 +179,7 @@ export function SubNavigation({ section }: { section: keyof typeof subNavigation
 
 export function PageTitle({ title, subtitle, crumbs, image }: { title: string; subtitle: string; crumbs?: string; image?: string }) {
   return (
-    <section className={`page-title ${image ? "page-title--image" : ""}`} style={image ? { backgroundImage: `url(${image})` } : undefined}>
+    <section className={`page-title ${image ? "page-title--image" : ""}`} style={image ? { backgroundImage: `url(${assetPath(image)})` } : undefined}>
       <div className="page-title__inner">
         <p className="eyebrow">{subtitle}</p>
         <h1>{title}</h1>
