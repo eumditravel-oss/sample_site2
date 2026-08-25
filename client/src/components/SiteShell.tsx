@@ -3,7 +3,7 @@
  * This file keeps a calm white header, construction-blue hierarchy, direct phone and email contact actions, a restrained Samsung C&T-inspired dropdown navigation, and optional image-led page banners.
  */
 import { Link, useLocation } from "wouter";
-import { ArrowUp, ArrowUpRight, ChevronDown, ChevronRight, Mail, Menu, Phone, X } from "lucide-react";
+import { ArrowUp, ArrowUpRight, ChevronDown, ChevronRight, Menu, Phone, X } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 
 const navItems = [
@@ -40,8 +40,7 @@ const subNavigation = {
 export function BrandMark({ inverse = false }: { inverse?: boolean }) {
   return (
     <Link href="/" className={`brand-mark ${inverse ? "brand-mark--inverse" : ""}`} aria-label="동성건설 홈으로 이동">
-      <span className="brand-mark__crop" aria-hidden="true"><img src="/dongseong-logo-source.jpg" alt="" /></span>
-      <span className="brand-mark__name"><b>동성건설</b><small>DONGSEONG CONSTRUCTION</small></span>
+      <img src="/dongseong-logo.svg" alt="동성건설 주식회사" />
     </Link>
   );
 }
@@ -192,86 +191,45 @@ export function PageTitle({ title, subtitle, crumbs, image }: { title: string; s
 export function SiteFooter() {
   return (
     <footer className="site-footer">
-      <div className="footer-main">
-        <BrandMark inverse />
-        <div className="footer-info">
-          <p>동성건설(주) · 서울특별시 ○○구 현장로 24, 202호</p>
-          <small>Copyright © DONGSEONG CONSTRUCTION. All rights reserved.</small>
+      <div className="footer-inquiry">
+        <div className="footer-inquiry__copy">
+          <span>START A PROJECT</span>
+          <h2>새로운 현장의 시작,<br />동성건설과 상의하세요.</h2>
         </div>
-        <div className="footer-call"><span>CONTACT</span><a href="tel:010-0000-0000">010-0000-0000</a><a className="footer-call__email" href="mailto:contact@dongseong-con.co.kr">contact@dongseong-con.co.kr</a></div>
-        <button className="footer-top" type="button" onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })} aria-label="맨 위로 이동"><ArrowUp size={25} /></button>
+        <Link href="/consultation" className="footer-inquiry__link">
+          <span>프로젝트 문의하기</span><ArrowUpRight size={30} aria-hidden="true" />
+        </Link>
+      </div>
+      <div className="footer-main">
+        <div className="footer-main__identity">
+          <BrandMark />
+          <p>기준을 지키는 시공,<br />현장에 남는 신뢰.</p>
+        </div>
+        <div className="footer-main__contact">
+          <span>OFFICE</span>
+          <address>서울특별시 ○○구 현장로 24, 202호</address>
+          <a href="tel:010-0000-0000">010-0000-0000</a>
+          <a href="mailto:contact@dongseong-con.co.kr">contact@dongseong-con.co.kr</a>
+        </div>
+        <nav className="footer-main__nav" aria-label="하단 메뉴">
+          <Link href="/company">회사소개</Link>
+          <Link href="/services/scope">사업영역</Link>
+          <Link href="/gallery">기술소개</Link>
+          <Link href="/notices">공지사항</Link>
+        </nav>
+        <button className="footer-top" type="button" onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })} aria-label="맨 위로 이동">
+          <ArrowUp size={22} /><span>BACK TO TOP</span>
+        </button>
       </div>
       <div className="footer-bottom">
+        <small>© DONGSEONG CONSTRUCTION CO., LTD.</small>
         <div>
           <a href="#privacy">개인정보처리방침</a>
           <a href="#terms">이용약관</a>
           <a href="#email">이메일무단수집거부</a>
         </div>
-        <p>동성건설은 안전과 품질을 최우선으로 현장을 완성합니다.</p>
       </div>
     </footer>
-  );
-}
-
-export function FloatingContactCard() {
-  const [open, setOpen] = useState(false);
-  const [copied, setCopied] = useState<"phone" | "email" | null>(null);
-  const phone = "010-0000-0000";
-  const email = "contact@dongseong-con.co.kr";
-
-  const copyToClipboard = async (value: string, type: "phone" | "email") => {
-    try {
-      if (navigator.clipboard?.writeText) {
-        await navigator.clipboard.writeText(value);
-      } else {
-        const input = document.createElement("textarea");
-        input.value = value;
-        input.style.position = "fixed";
-        input.style.opacity = "0";
-        document.body.appendChild(input);
-        input.select();
-        document.execCommand("copy");
-        input.remove();
-      }
-      setCopied(type);
-      window.setTimeout(() => setCopied(null), 1600);
-    } catch {
-      setCopied(null);
-    }
-  };
-
-  const handlePhoneClick = (event: React.MouseEvent<HTMLAnchorElement>) => {
-    if (window.matchMedia("(min-width: 721px)").matches) {
-      event.preventDefault();
-      void copyToClipboard(phone, "phone");
-    }
-  };
-
-  useEffect(() => {
-    const handleEscape = (event: KeyboardEvent) => {
-      if (event.key === "Escape") setOpen(false);
-    };
-    window.addEventListener("keydown", handleEscape);
-    return () => window.removeEventListener("keydown", handleEscape);
-  }, []);
-
-  return (
-    <aside className={`floating-contact ${open ? "is-open" : ""}`} aria-label="상담 문의">
-      <div id="floating-contact-panel" className="floating-contact__panel" role="dialog" aria-label="대표 연락처" aria-hidden={!open}>
-        <p>CONTACT</p>
-        <strong>상담 문의</strong>
-        <a href={`tel:${phone}`} className="floating-contact__copy-target" tabIndex={open ? 0 : -1} onClick={handlePhoneClick} aria-label="대표번호: 모바일에서는 전화 연결, PC에서는 번호 복사"><Phone size={18} aria-hidden="true" /><span><small>대표번호</small><b>{phone}</b></span><em>{copied === "phone" ? "복사됨" : "복사"}</em></a>
-        <button type="button" className="floating-contact__detail floating-contact__copy-target" tabIndex={open ? 0 : -1} onClick={() => void copyToClipboard(email, "email")} aria-label="대표 이메일 복사"><Mail size={18} aria-hidden="true" /><span><small>대표 이메일</small><b>{email}</b></span><em>{copied === "email" ? "복사됨" : "복사"}</em></button>
-      </div>
-      <div className="floating-contact__actions">
-        <button type="button" className="floating-contact__trigger" onClick={() => setOpen((current) => !current)} aria-expanded={open} aria-controls="floating-contact-panel">
-          <span className="floating-contact__icon"><Phone size={27} aria-hidden="true" /></span>
-          <span className="floating-contact__copy"><small>CONSULTATION</small><strong>상담 문의</strong></span>
-          <ChevronDown size={17} aria-hidden="true" />
-        </button>
-        <Link href="/consultation" className="floating-contact__consult-link" onClick={() => setOpen(false)} aria-label="온라인 상담 신청 페이지로 이동"><span>온라인<br />상담</span><ArrowUpRight size={16} aria-hidden="true" /></Link>
-      </div>
-    </aside>
   );
 }
 
@@ -290,7 +248,6 @@ export function SiteFrame({ children }: { children: React.ReactNode }) {
       <SiteHeader />
       <main key={isServiceRoute ? location : undefined} className={isServiceRoute ? "site-frame__main site-frame__main--service" : "site-frame__main"}>{children}</main>
       <SiteFooter />
-      <FloatingContactCard />
     </div>
   );
 }

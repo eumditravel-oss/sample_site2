@@ -103,7 +103,7 @@ export default function ConsultationList() {
               <DialogHeader><DialogTitle>비공개 상담 확인</DialogTitle><DialogDescription>{selectedPost?.title}</DialogDescription></DialogHeader>
               <label className="mt-5 block text-sm font-semibold text-[#3f3545]" htmlFor="detail-password">비밀번호</label>
               <input id="detail-password" className="mt-2 h-11 w-full border border-[#cfc7d4] px-3 text-sm" type="password" value={password} onChange={(event) => setPassword(event.target.value)} autoComplete="current-password" required autoFocus placeholder="등록 시 설정한 비밀번호" />
-              <DialogFooter className="mt-5"><Button type="submit" className="bg-[#4d2f78] hover:bg-[#18141d]">상세 내용 확인</Button></DialogFooter>
+              <DialogFooter className="mt-5"><Button type="submit" className="bg-[#b85f3b] hover:bg-[#1d292f]">상세 내용 확인</Button></DialogFooter>
             </form>
           ) : (
             <>
