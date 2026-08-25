@@ -14,7 +14,30 @@
   --ease-standard: cubic-bezier(.4, 0, .2, 1);
 }
 
-html { scroll-behavior: smooth; }
+html {
+  scroll-behavior: smooth;
+  scrollbar-color: var(--s2-rust) var(--s2-paper);
+  scrollbar-width: auto;
+}
+
+html::-webkit-scrollbar {
+  width: 22px;
+}
+
+html::-webkit-scrollbar-track {
+  background: var(--s2-paper);
+  border-left: 1px solid var(--s2-line);
+}
+
+html::-webkit-scrollbar-thumb {
+  background: var(--s2-rust);
+  border: 5px solid var(--s2-paper);
+  border-radius: 999px;
+}
+
+html::-webkit-scrollbar-thumb:hover {
+  background: var(--s2-gold);
+}
 body { background: var(--s2-paper); color: var(--s2-ink); font-family: "Noto Sans KR", sans-serif; }
 body::selection { background: var(--s2-gold); color: var(--s2-ink); }
 .s2-site { min-height: 100vh; overflow: clip; background: var(--s2-paper); }
