@@ -41,7 +41,7 @@ const subNavigation = {
 export function BrandMark({ inverse = false }: { inverse?: boolean }) {
   return (
     <Link href="/" className={`brand-mark ${inverse ? "brand-mark--inverse" : ""}`} aria-label="동성건설 홈으로 이동">
-      <img src={assetPath("dongseong-logo.svg")} alt="동성건설 주식회사" />
+      <img src={assetPath(inverse ? "dongseong-logo-white.svg" : "dongseong-logo.svg")} alt="동성건설 주식회사" />
     </Link>
   );
 }
@@ -93,7 +93,7 @@ export function SiteHeader() {
       onKeyDown={(event) => { if (event.key === "Escape") closeMega(); }}
     >
       <div className="site-header__inner">
-        <BrandMark />
+        <BrandMark inverse={location === "/"} />
         <nav className="desktop-nav" aria-label="주요 메뉴">
           {navItems.map((item, index) => (
             <div className={`desktop-nav__item ${activeMega === index ? "is-open" : ""}`} key={item.label} onMouseEnter={() => setActiveMega(index)}>
@@ -122,7 +122,7 @@ export function SiteHeader() {
       {open && (
         <div className="mobile-nav-panel" role="dialog" aria-modal="true" aria-label="모바일 메뉴">
           <div className="mobile-nav-panel__top">
-            <BrandMark />
+            <BrandMark inverse />
             <button className="menu-button" type="button" onClick={() => setOpen(false)} aria-label="메뉴 닫기">
               <X size={26} />
             </button>

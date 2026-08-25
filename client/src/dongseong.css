@@ -610,7 +610,6 @@ body::selection { background: var(--ds-acid); color: var(--ds-ink); }
   .site-header .brand-mark { align-self: auto; }
   .site-header .brand-mark { width: 250px; }
   .site-header.site-header--home .brand-mark { width: 250px; padding: 0; background: transparent; }
-  .site-header.site-header--home .brand-mark > img { filter: brightness(0) invert(1); }
   .site-header .desktop-nav,
   .site-header .desktop-nav { width: auto; height: 100%; flex-direction: row; gap: 0; margin: 0 76px 0 auto; border-top: 0; }
   .site-header .desktop-nav__item { width: auto; height: 100%; display: flex; border-bottom: 0; }
