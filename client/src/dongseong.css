@@ -74,14 +74,18 @@ body::selection { background: var(--ds-acid); color: var(--ds-ink); }
 }
 .brand-mark > .brand-mark__crop { display: block; }
 .brand-mark > .brand-mark__name { display: flex; }
+.mobile-nav-panel__top .brand-mark__crop img,
+.brand-mark--inverse .brand-mark__crop img { filter: none; opacity: 1; }
 .brand-mark__crop img {
   position: absolute;
-  inset: 0;
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  object-position: 26% 48%;
-  transform: scale(2.35);
+  top: -68px;
+  left: -47px;
+  width: 262px !important;
+  max-width: none !important;
+  height: auto !important;
+  max-height: none !important;
+  object-fit: initial;
+  transform: none;
   mix-blend-mode: multiply;
 }
 .brand-mark__name { display: flex; flex-direction: column; line-height: 1; }
@@ -269,14 +273,16 @@ body::selection { background: var(--ds-acid); color: var(--ds-ink); }
 
 /* Sub pages */
 .page-title {
+  position: relative;
   min-height: 330px;
+  overflow: hidden;
   background: var(--ds-ink);
   border: 0;
 }
 .page-title--image { background-position: center 54% !important; background-size: cover !important; }
-.page-title--image::before { content: ""; position: absolute; inset: 0; background: linear-gradient(90deg,rgba(24,20,29,.96),rgba(77,47,120,.62),rgba(24,20,29,.2)); }
+.page-title--image::before { content: ""; position: absolute; z-index: 0; inset: 0; background: linear-gradient(90deg,rgba(24,20,29,.9),rgba(77,47,120,.5),rgba(24,20,29,.12)); pointer-events: none; }
 .page-title::after { content: "DS / FIELD & FUTURE"; position: absolute; right: 4%; bottom: 25px; color: rgba(255,255,255,.35); font: 800 10px Montserrat,sans-serif; letter-spacing: .2em; }
-.page-title__inner { z-index: 1; width: min(1360px,calc(100% - 80px)); }
+.page-title__inner { position: relative; z-index: 1; width: min(1360px,calc(100% - 80px)); }
 .page-title .eyebrow { color: var(--ds-acid); }
 .page-title h1 { color: #fff; font-size: clamp(44px,5vw,70px); font-weight: 900; letter-spacing: -.075em; }
 .breadcrumbs { color: #b9b0be; }
@@ -303,9 +309,15 @@ body::selection { background: var(--ds-acid); color: var(--ds-ink); }
 .pagination button.is-active { background: var(--ds-violet); color: #fff; }
 
 /* Contact and footer */
-.floating-contact { right: 28px; bottom: 28px; }
-.floating-contact__panel { border-radius: 0; border-color: var(--ds-violet); }
+.floating-contact { right: 28px; bottom: 28px; pointer-events: none; }
+.floating-contact__actions { pointer-events: auto; }
+.floating-contact__panel { position: absolute; right: 0; bottom: calc(100% + 10px); border-radius: 0; border-color: var(--ds-violet); }
+.floating-contact.is-open .floating-contact__panel { pointer-events: auto; }
 .floating-contact__trigger { border-radius: 0; background: var(--ds-violet); }
+.floating-contact__trigger .floating-contact__icon { background: #fff; color: var(--ds-violet); }
+.floating-contact__trigger .floating-contact__copy small { color: rgba(255,255,255,.68); }
+.floating-contact__trigger .floating-contact__copy strong { color: #fff; }
+.floating-contact__trigger > svg { color: rgba(255,255,255,.72); }
 .floating-contact__consult-link { border-radius: 0; background: var(--ds-acid); color: var(--ds-ink); }
 .site-footer { background: var(--ds-ink); }
 .footer-main { width: min(1460px,calc(100% - 80px)); min-height: 220px; }
@@ -337,6 +349,7 @@ body::selection { background: var(--ds-acid); color: var(--ds-ink); }
   .brand-mark__crop { width: 48px; height: 40px; }
   .brand-mark__name b { font-size: 16px; }
   .brand-mark__name small { font-size: 6px; }
+  .brand-mark__crop img { top: -59px; left: -40px; width: 225px !important; }
   .mobile-nav-panel { background: var(--ds-ink); }
   .mobile-nav-panel__label,.mobile-nav-panel__contact { color: var(--ds-acid); }
   .mobile-nav-group > button,.mobile-nav-sub a { color: #fff; border-color: rgba(255,255,255,.12); }

@@ -54,6 +54,13 @@ export function SiteHeader() {
 
   const closeMega = () => setActiveMega(null);
   const toggleMega = (index: number) => setActiveMega((current) => current === index ? null : index);
+  const isPrimaryActive = (index: number) => {
+    if (index === 0) return location === "/company" || location === "/location";
+    if (index === 1) return location === "/services" || location.startsWith("/services/");
+    if (index === 2) return location === "/consultation" || location.startsWith("/consultation/");
+    if (index === 3) return location === "/notices" || location.startsWith("/notices/");
+    return location === "/gallery";
+  };
   const navigateToPrimaryItem = (index: number) => {
     closeMega();
     setLocation(navItems[index].links[0].href);
@@ -92,7 +99,7 @@ export function SiteHeader() {
             <div className={`desktop-nav__item ${activeMega === index ? "is-open" : ""}`} key={item.label} onMouseEnter={() => setActiveMega(index)}>
               <button
                 type="button"
-                className={location === item.href || activeMega === index ? "is-active" : ""}
+                className={isPrimaryActive(index) || activeMega === index ? "is-active" : ""}
                 aria-expanded={activeMega === index}
                 aria-controls={`submenu-${index}`}
                 onFocus={() => setActiveMega(index)}
@@ -172,7 +179,7 @@ export function SubNavigation({ section }: { section: keyof typeof subNavigation
 
 export function PageTitle({ title, subtitle, crumbs, image }: { title: string; subtitle: string; crumbs?: string; image?: string }) {
   return (
-    <section className={`page-title ${image ? "page-title--image" : ""}`} style={image ? { backgroundImage: `linear-gradient(90deg,#102233c9,#10223379),url(${image})` } : undefined}>
+    <section className={`page-title ${image ? "page-title--image" : ""}`} style={image ? { backgroundImage: `url(${image})` } : undefined}>
       <div className="page-title__inner">
         <p className="eyebrow">{subtitle}</p>
         <h1>{title}</h1>
@@ -200,7 +207,7 @@ export function SiteFooter() {
           <a href="#terms">이용약관</a>
           <a href="#email">이메일무단수집거부</a>
         </div>
-        <p>본 페이지의 사업자 정보·이미지·문구는 교체 전용 예시입니다.</p>
+        <p>동성건설은 안전과 품질을 최우선으로 현장을 완성합니다.</p>
       </div>
     </footer>
   );
