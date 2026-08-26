@@ -87,12 +87,16 @@ export function SiteFooter() {
   return (
     <footer className="s2-footer">
       <div className="s2-footer__cta">
-        <p>PROJECT INQUIRY</p>
-        <h2>다음 프로젝트의 기준을<br />함께 세웁니다.</h2>
-        <Link href="/contact">문의 준비하기 <ArrowUpRight /></Link>
+        <figure><img src={assetPath("field-01.jpg")} alt="" /></figure>
+        <div>
+          <p>PROJECT INQUIRY</p>
+          <h2>조건을 이해하는 것부터<br />프로젝트는 시작됩니다.</h2>
+          <span>현장 지역과 일정, 공사 범위를 정리해 주시면 검토를 위한 문의 초안을 만들 수 있습니다.</span>
+          <Link href="/contact">프로젝트 문의 <ArrowUpRight /></Link>
+        </div>
       </div>
       <div className="s2-footer__body">
-        <div><BrandMark /><p>{company.nameEn}</p></div>
+        <div><BrandMark inverse /><p>{company.nameEn}</p></div>
         <dl>
           <div><dt>CONTACT</dt><dd>{company.phone ?? "대표번호 등록 준비 중"}</dd></div>
           <div><dt>E-MAIL</dt><dd>{company.email ?? "대표 이메일 등록 준비 중"}</dd></div>

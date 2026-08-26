@@ -141,8 +141,26 @@ export default function Home() {
       </section>
 
       <section className="s2-transition-links">
-        <Link href="/quality"><small>01 / STANDARD</small><h3>품질과 안전의 기준</h3><ArrowUpRight /></Link>
-        <Link href="/contact"><small>02 / INQUIRY</small><h3>프로젝트 문의 준비</h3><ArrowUpRight /></Link>
+        <header>
+          <p>NEXT STEP</p>
+          <h2>프로젝트의 다음 단계를<br />확인하세요.</h2>
+        </header>
+        <div>
+          <Link href="/quality">
+            <figure><img src={assetPath("field-03.jpg")} alt="" /></figure>
+            <small>01 / STANDARD</small>
+            <h3>품질과 안전의 기준</h3>
+            <p>현장을 완성하는 관리 원칙과 실행 기준을 확인합니다.</p>
+            <span>View standard <ArrowUpRight /></span>
+          </Link>
+          <Link href="/contact">
+            <figure><img src={assetPath("field-02.jpg")} alt="" /></figure>
+            <small>02 / INQUIRY</small>
+            <h3>프로젝트 문의</h3>
+            <p>검토에 필요한 현장 조건과 프로젝트 정보를 정리합니다.</p>
+            <span>Start inquiry <ArrowUpRight /></span>
+          </Link>
+        </div>
       </section>
     </SiteFrame>
   );
