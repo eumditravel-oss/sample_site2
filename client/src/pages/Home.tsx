@@ -143,7 +143,7 @@ export default function Home() {
       <section className="s2-transition-links">
         <header>
           <p>NEXT STEP</p>
-          <h2>프로젝트의 다음 단계를<br />확인하세요.</h2>
+          <h2><span>프로젝트의</span><span>다음 단계를</span><span>확인하세요</span></h2>
         </header>
         <div>
           <Link href="/quality">

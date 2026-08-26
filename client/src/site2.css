@@ -175,6 +175,7 @@ body::selection { background: var(--s2-gold); color: var(--s2-ink); }
 .s2-transition-links > header { align-self: start; position: sticky; top: 125px; }
 .s2-transition-links > header p { color: var(--s2-rust); font: 800 10px Montserrat,sans-serif; letter-spacing: .2em; }
 .s2-transition-links > header h2 { margin-top: 22px; font-size: clamp(38px,3.7vw,58px); line-height: 1.13; letter-spacing: -.07em; }
+.s2-transition-links > header h2 span { display: block; }
 .s2-transition-links > div { display: grid; grid-template-columns: 1fr 1fr; gap: 22px; }
 .s2-transition-links a { position: relative; display: grid; grid-template-rows: 255px auto auto 1fr auto; min-width: 0; padding: 0 0 24px; border-bottom: 2px solid var(--s2-ink); color: var(--s2-ink); transition: border-color var(--motion-fast),transform var(--motion-base) var(--ease-out); }
 .s2-transition-links figure { position: relative; margin: 0 0 25px; overflow: hidden; background: #dfe6e9; }
