@@ -90,8 +90,8 @@ export function SiteFooter() {
         <figure><img src={assetPath("field-01.jpg")} alt="" /></figure>
         <div>
           <p>PROJECT INQUIRY</p>
-          <h2>조건을 이해하는 것부터<br />프로젝트는 시작됩니다.</h2>
-          <span>현장 지역과 일정, 공사 범위를 정리해 주시면 검토를 위한 문의 초안을 만들 수 있습니다.</span>
+          <h2><span>최선을 다해,</span><span>결과로 보답하겠습니다.</span></h2>
+          <span>현장을 정확히 이해하고 안전과 품질을 끝까지 지키는 시공으로 보내주신 신뢰에 답하겠습니다.</span>
           <Link href="/contact">프로젝트 문의 <ArrowUpRight /></Link>
         </div>
       </div>

@@ -80,8 +80,9 @@ body::selection { background: var(--s2-gold); color: var(--s2-ink); }
 .s2-footer__cta > div::before { content: ""; position: absolute; inset: 0; opacity: .38; background-image: linear-gradient(rgba(13,108,157,.12) 1px,transparent 1px),linear-gradient(90deg,rgba(13,108,157,.12) 1px,transparent 1px); background-size: 48px 48px; mask-image: linear-gradient(90deg,transparent,#000); pointer-events: none; }
 .s2-footer__cta p,.s2-footer__cta h2,.s2-footer__cta span,.s2-footer__cta a { position: relative; z-index: 1; }
 .s2-footer__cta p { color: var(--s2-rust); font: 800 10px Montserrat,sans-serif; letter-spacing: .2em; }
-.s2-footer__cta h2 { margin-top: 24px; font-size: clamp(42px,4vw,66px); line-height: 1.1; font-weight: 850; letter-spacing: -.075em; }
-.s2-footer__cta span { max-width: 610px; margin-top: 25px; color: var(--s2-muted); font-size: 13px; line-height: 1.8; }
+.s2-footer__cta h2 { margin-top: 24px; font-size: clamp(42px,4vw,66px); line-height: 1.1; font-weight: 850; letter-spacing: -.075em; word-break: keep-all; }
+.s2-footer__cta h2 span { display: block; max-width: none; margin: 0; color: inherit; font: inherit; line-height: inherit; }
+.s2-footer__cta > div > span { max-width: 610px; margin-top: 25px; color: var(--s2-muted); font-size: 13px; line-height: 1.8; }
 .s2-footer__cta a { width: 210px; min-height: 58px; display: flex; align-items: center; justify-content: space-between; margin-top: 34px; padding: 0 18px; background: var(--s2-ink); color: #fff; font-size: 12px; font-weight: 800; transition: background var(--motion-fast),width var(--motion-base) var(--ease-out); }
 .s2-footer__cta a:hover { width: 230px; background: var(--s2-rust); }
 .s2-footer__body { width: min(1380px,calc(100% - 96px)); display: grid; grid-template-columns: 1.1fr 1.35fr .65fr auto; align-items: start; gap: 65px; margin: 0 auto; padding: 66px 0 54px; }
@@ -467,7 +468,7 @@ body::selection { background: var(--s2-gold); color: var(--s2-ink); }
   .s2-footer__cta figure { min-height: 300px; }
   .s2-footer__cta > div { padding: 62px 22px 70px; }
   .s2-footer__cta h2 { margin-top: 19px; font-size: 39px; }
-  .s2-footer__cta span { margin-top: 20px; font-size: 12px; }
+  .s2-footer__cta > div > span { margin-top: 20px; font-size: 12px; }
   .s2-footer__cta a { width: 100%; min-height: 58px; margin-top: 29px; }
   .s2-footer__cta a:hover { width: 100%; }
   .s2-footer__body { width: calc(100% - 44px); grid-template-columns: 1fr auto; gap: 38px 24px; padding: 50px 0 40px; }
