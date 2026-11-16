@@ -12,10 +12,10 @@ export default function Quality() {
   return (
     <SiteFrame>
       <PageHero index="04" eyebrow="QUALITY" title="품질·안전" description="현장의 기준은 문서가 아니라 매 순간의 판단으로 완성됩니다." image="/field-03.jpg" />
-      <SectionNav items={[{ label: "품질관리", href: "/quality" }, { label: "안전관리", href: "/quality/safety" }]} />
+      <SectionNav items={[{ label: "품질관리", href: "/quality" }, { label: "안전관리", href: "/quality/safety#safety" }]} />
       <section className="s2-quality-page">
         <header><p>OUR STANDARD</p><h2>품질과 안전을<br />하나의 실행 체계로.</h2><span>보유 인증이나 수상 내역은 실제 자료가 확인된 후 공개합니다.</span></header>
-        <div>{standards.map((item) => <Reveal key={item.index}><span>{item.index}</span><p>{item.label}</p><h3>{item.title}</h3><strong>{item.copy}</strong></Reveal>)}</div>
+        <div>{standards.map((item) => <Reveal key={item.index}><span>{item.index}</span><p>{item.label}</p><h3 id={item.index === "02" ? "safety" : undefined} className={item.index === "02" ? "s2-section-target" : undefined} tabIndex={item.index === "02" ? -1 : undefined}>{item.title}</h3><strong>{item.copy}</strong></Reveal>)}</div>
       </section>
       <section className="s2-quality-principle"><p>RESPONSIBILITY</p><h2>완성도를 만드는 것은<br />보이지 않는 기준의 반복입니다.</h2></section>
     </SiteFrame>

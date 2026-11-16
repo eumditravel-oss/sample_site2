@@ -1,6 +1,8 @@
 import { SiteFrame } from "@/components/SiteShell";
 import { company } from "@/config/company";
 import { usePageMeta } from "@/hooks/usePageMeta";
+import { ArrowUpRight } from "lucide-react";
+import { Link } from "wouter";
 
 export default function Privacy() {
   usePageMeta("개인정보 처리 안내", "동성건설 프로젝트 문의 페이지의 개인정보 처리 방식 안내");
@@ -14,6 +16,7 @@ export default function Privacy() {
           <h2>공개되지 않은 연락처</h2><p>{company.name}의 공식 대표 이메일과 주소는 현재 등록되지 않았습니다. 확인되지 않은 연락처를 임의로 표시하지 않습니다.</p>
           <h2>문의</h2><p>공식 개인정보 담당 연락처가 제공되면 이 페이지에 반영합니다.</p>
         </div>
+        <Link className="s2-legal-page__contact" href="/contact">프로젝트 문의로 이동 <ArrowUpRight aria-hidden="true" /></Link>
       </section>
     </SiteFrame>
   );

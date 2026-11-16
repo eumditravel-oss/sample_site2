@@ -15,13 +15,13 @@ export default function Business() {
   return (
     <SiteFrame>
       <PageHero index="02" eyebrow="BUSINESS" title="사업영역" description="분리된 공정이 아닌 하나의 프로젝트로 현장을 바라봅니다." image="/field-02.jpg" />
-      <SectionNav items={areas.map((area) => ({ label: area.title, href: `/business/${area.slug}` }))} />
+      <SectionNav items={areas.map((area) => ({ label: area.title, href: `/business/${area.slug}#${area.slug}` }))} />
       <section className="s2-business-page">
         <header><p>CORE BUSINESS</p><h2>공간과 도시를 이루는<br />세 가지 실행 영역</h2><span>실제 프로젝트와 수행실적은 확인된 정보가 등록되는 시점에 공개합니다.</span></header>
         {areas.map((area) => (
-          <article className="s2-business-landing" id={area.slug} key={area.slug}>
+          <article className="s2-business-landing" key={area.slug}>
             <figure><img src={assetPath(area.image)} alt="" /><span>{area.index}</span></figure>
-            <Reveal><p>{area.label}</p><h3>{area.title}</h3><strong>{area.copy}</strong><ul><li>프로젝트 조건 분석</li><li>공정 간 연결 검토</li><li>품질·안전 기준 관리</li></ul><Link href="/contact">프로젝트 문의 준비 <ArrowUpRight /></Link></Reveal>
+            <Reveal><p>{area.label}</p><h3 id={area.slug} className="s2-section-target" tabIndex={-1}>{area.title}</h3><strong>{area.copy}</strong><ul><li>프로젝트 조건 분석</li><li>공정 간 연결 검토</li><li>품질·안전 기준 관리</li></ul><Link href="/contact">프로젝트 문의 준비 <ArrowUpRight /></Link></Reveal>
           </article>
         ))}
       </section>

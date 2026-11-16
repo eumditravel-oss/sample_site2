@@ -7,9 +7,9 @@ import { useEffect, useRef, useState, type CSSProperties } from "react";
 import { Link } from "wouter";
 
 const heroSlides = [
-  { image: "/field-01.jpg", eyebrow: "INFRASTRUCTURE", title: <>도시를 움직이는<br /><strong>기반을 구축합니다.</strong></>, description: "프로젝트의 조건을 읽고, 시공 전 과정의 완성도를 관리합니다.", href: "/business/civil" },
-  { image: "/field-02.jpg", eyebrow: "ENGINEERING", title: <>공간의 가치를 높이는<br /><strong>정밀한 엔지니어링.</strong></>, description: "구조와 공정, 품질 기준을 하나의 실행 체계로 연결합니다.", href: "/business/architecture" },
-  { image: "/field-03.jpg", eyebrow: "FIELD CONTROL", title: <>현장의 마지막까지<br /><strong>책임으로 완성합니다.</strong></>, description: "안전과 품질을 우선에 두고 프로젝트의 마감 기준을 지킵니다.", href: "/quality" },
+  { image: "/field-01.jpg", eyebrow: "INFRASTRUCTURE", title: <>도시를 움직이는<br /><strong>기반을 구축합니다.</strong></>, description: "프로젝트의 조건을 읽고, 시공 전 과정의 완성도를 관리합니다.", href: "/business/civil#civil", linkLabel: "토목 사업 보기" },
+  { image: "/field-02.jpg", eyebrow: "ENGINEERING", title: <>공간의 가치를 높이는<br /><strong>정밀한 엔지니어링.</strong></>, description: "구조와 공정, 품질 기준을 하나의 실행 체계로 연결합니다.", href: "/business/architecture#architecture", linkLabel: "건축 사업 보기" },
+  { image: "/field-03.jpg", eyebrow: "FIELD CONTROL", title: <>현장의 마지막까지<br /><strong>책임으로 완성합니다.</strong></>, description: "안전과 품질을 우선에 두고 프로젝트의 마감 기준을 지킵니다.", href: "/quality", linkLabel: "품질·안전 보기" },
 ];
 
 function useReducedMotion() {
@@ -91,7 +91,7 @@ export default function Home() {
           <p>{heroSlides[heroIndex].eyebrow}</p>
           <h1>{heroSlides[heroIndex].title}</h1>
           <span>{heroSlides[heroIndex].description}</span>
-          <Link href={heroSlides[heroIndex].href}>View capability <ArrowUpRight /></Link>
+          <Link href={heroSlides[heroIndex].href}>{heroSlides[heroIndex].linkLabel} <ArrowUpRight /></Link>
         </div>
         <div className="s2-home-hero__controls">
           <button type="button" onClick={() => moveHero(-1)} aria-label="이전 슬라이드"><ArrowLeft /></button>
@@ -129,9 +129,9 @@ export default function Home() {
       <section className="s2-business-home">
         <Reveal className="s2-business-home__title"><p>CORE CAPABILITY</p><h2>Business Area</h2><span>프로젝트의 목적과 현장 조건에 맞춰 핵심 사업영역을 연결합니다.</span></Reveal>
         <div className="s2-business-home__grid">
-          <Link href="/business/civil" style={{ "--area-image": `url(${assetPath("field-01.jpg")})` } as CSSProperties}><span>01</span><HardHat /><h3>CIVIL</h3><p>도시 기반과 이동 환경을 구축하는 토목 영역</p><b>Explore <ArrowUpRight /></b></Link>
-          <Link href="/business/architecture" style={{ "--area-image": `url(${assetPath("field-02.jpg")})` } as CSSProperties}><span>02</span><Building2 /><h3>ARCHITECTURE</h3><p>구조와 공간의 완성도를 높이는 건축 영역</p><b>Explore <ArrowUpRight /></b></Link>
-          <Link href="/business/field" style={{ "--area-image": `url(${assetPath("field-03.jpg")})` } as CSSProperties}><span>03</span><Factory /><h3>FIELD</h3><p>현장의 연결과 마감을 책임지는 외부시설 영역</p><b>Explore <ArrowUpRight /></b></Link>
+          <Link href="/business/civil#civil" style={{ "--area-image": `url(${assetPath("field-01.jpg")})` } as CSSProperties}><span>01</span><HardHat /><h3>CIVIL</h3><p>도시 기반과 이동 환경을 구축하는 토목 영역</p><b>Explore <ArrowUpRight /></b></Link>
+          <Link href="/business/architecture#architecture" style={{ "--area-image": `url(${assetPath("field-02.jpg")})` } as CSSProperties}><span>02</span><Building2 /><h3>ARCHITECTURE</h3><p>구조와 공간의 완성도를 높이는 건축 영역</p><b>Explore <ArrowUpRight /></b></Link>
+          <Link href="/business/field#field" style={{ "--area-image": `url(${assetPath("field-03.jpg")})` } as CSSProperties}><span>03</span><Factory /><h3>FIELD</h3><p>현장의 연결과 마감을 책임지는 외부시설 영역</p><b>Explore <ArrowUpRight /></b></Link>
         </div>
       </section>
 

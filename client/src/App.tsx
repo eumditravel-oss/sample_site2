@@ -1,4 +1,5 @@
 import ErrorBoundary from "@/components/ErrorBoundary";
+import { InquiryDraftProvider } from "@/context/InquiryDraft";
 import Business from "@/pages/Business";
 import Company from "@/pages/Company";
 import Contact from "@/pages/Contact";
@@ -43,12 +44,12 @@ function Routes() {
   );
 }
 
-export default function App() {
-  const base = import.meta.env.BASE_URL.replace(/\/$/, "") || "/";
+export default function App({ ssrPath }: { ssrPath?: string }) {
+  const base = import.meta.env.BASE_URL.replace(/\/$/, "");
   return (
     <ErrorBoundary>
-      <Router base={base}>
-        <Routes />
+      <Router base={base} ssrPath={ssrPath}>
+        <InquiryDraftProvider><Routes /></InquiryDraftProvider>
       </Router>
     </ErrorBoundary>
   );

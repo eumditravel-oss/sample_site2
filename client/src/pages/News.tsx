@@ -2,7 +2,7 @@ import { PageHero, SiteFrame } from "@/components/SiteShell";
 import { usePageMeta } from "@/hooks/usePageMeta";
 
 export default function News() {
-  usePageMeta("뉴스룸", "동성건설의 공식 공지와 프로젝트 소식을 위한 뉴스룸");
+  usePageMeta("뉴스룸", "동성건설의 확인된 공지와 프로젝트 소식을 위한 뉴스룸");
   return (
     <SiteFrame>
       <PageHero index="05" eyebrow="NEWSROOM" title="뉴스룸" description="확인된 기업 소식과 프로젝트 정보를 전달합니다." image="/field-01.jpg" />
