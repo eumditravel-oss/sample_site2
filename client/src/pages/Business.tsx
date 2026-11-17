@@ -76,7 +76,7 @@ export default function Business() {
         {areas.map((area) => (
           <article className="s2-business-landing" key={area.slug}>
             <figure>
-              <img src={assetPath(area.image)} alt="" />
+              <img src={assetPath(area.image)} alt={`${area.title} 사업부문 대표 현장 이미지`} loading="lazy" decoding="async" />
               <span>{area.index}</span>
             </figure>
             <Reveal>

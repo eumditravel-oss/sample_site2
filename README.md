@@ -1,6 +1,6 @@
-# 동성건설 웹사이트
+# (주)동성건설 공식 웹사이트
 
-동성건설의 토목·건축·외부 시설 시공 정보를 소개하는 반응형 웹사이트입니다.
+(주)동성건설의 토목·건축·외부 인프라 통합 엔지니어링 시공 역량을 소개하는 반응형 기업 웹사이트입니다.
 
 ## 실행
 
@@ -9,19 +9,19 @@ pnpm install
 pnpm dev
 ```
 
-## 검증
+## 검증 및 빌드
 
 ```bash
 pnpm check
 pnpm test
 pnpm build
+pnpm seo:audit
 ```
 
-## 검색과 정적 페이지
+## 웹사이트 내 SEO 관리 및 정적 프리렌더링 구조
 
-빌드 시 `scripts/prerender.mjs`가 각 경로의 HTML 본문과 메타데이터, `sitemap.xml`, 별도의 404 페이지를 `dist/public`에 생성합니다. 자바스크립트가 없어도 주요 본문과 메뉴를 읽을 수 있습니다. 문의 양식은 자바스크립트가 실행되어야 사용할 수 있습니다.
-
-- 경로를 추가하거나 페이지 내용을 분리하면 `client/src/App.tsx`와 `client/src/config/seo.ts`의 페이지·별칭·제목을 함께 갱신합니다. 같은 내용을 표시하는 별칭은 대표 페이지를 canonical로 사용합니다.
-- 실제 도메인이 바뀌면 `siteUrl`, `client/index.html`의 소셜 이미지 주소와 Vite의 배포 기본 경로를 함께 변경해야 합니다. 검증되지 않은 회사 연락처·주소·실적 정보는 추가하지 않습니다.
-- 사이트맵 주소는 `https://eumditravel-oss.github.io/sample_site2/sitemap.xml`입니다. 배포 후 소유권이 확인된 Search Console에서 제출할 수 있습니다. GitHub Pages 프로젝트 경로 아래의 `robots.txt`는 도메인 루트의 robots.txt를 대체하지 않으므로 이 프로젝트에서 크롤링 정책을 설정했다고 가정하지 않습니다.
-- GitHub Pages 경로로 빌드한 뒤 `node scripts/verify-seo.mjs`로 정적 HTML, 로컬 HTTP 응답 및 브라우저 동작을 검사합니다. Windows Chrome 외의 환경에서는 `CHROME_BIN`으로 브라우저 실행 파일을 지정합니다. 테스트 결과는 검색 색인이나 실제 기기 동작을 보장하지 않습니다.
+- **중앙 집중형 SEO 설정 (`client/src/config/seo.ts`)**: 정식 도메인(`siteUrl`), 검색엔진 웹마스터 소유권 인증 코드(`verification.naver`, `verification.google`, `verification.bing`), 기본 키워드, 소셜 미리보기 이미지(`og.png`), 페이지별 제목·설명·키워드·색인 여부(`indexable`)를 이 파일 한 곳에서 일괄 관리합니다.
+- **웹사이트 내 실시간 SEO 인스펙터 (`?seo=1`)**: 웹사이트 어느 페이지에서든 URL 뒤에 `?seo=1`을 붙여 접속하면 우측 하단에 **실시간 SEO 진단 인스펙터 패널**이 열립니다(세션 유지, `?seo=0` 또는 닫기 버튼으로 해제). 일반 방문자나 검색 로봇에게는 렌더링되지 않으며, 검색결과(SERP) 미리보기, 제목·설명 글자 수, H1 유일성, 이미지 `alt` 누락 여부, JSON-LD 스키마, `sitemap.xml` / `rss.xml` / `robots.txt` 바로 열기·복사 기능을 제공합니다.
+- **자동 생성 산출물 (`scripts/prerender.mjs`)**: 빌드 시 24개 라우트 문서의 정적 HTML, 페이지별 메타데이터, 4종 `@graph` JSON-LD(`GeneralContractor`, `WebSite`, `WebPage`, `BreadcrumbList`), `sitemap.xml`(색인 대상 7개 대표 비즈니스 페이지), `rss.xml`(네이버 서치어드바이저 제출용 RSS 2.0 피드), `robots.txt`, `404.html`을 `dist/public`에 자동 생성합니다. 법적 고지 페이지(`/privacy`, `/terms`, `/email-policy`)는 자동으로 `noindex,follow` 처리되어 핵심 비즈니스 페이지 위주로 검색 노출이 집중됩니다.
+- **기업 식별정보 연동 (`client/src/config/company.ts`)**: 검증되지 않은 회사 연락처·주소·실적 정보는 임의로 표기하지 않으며, 의뢰인 자료 확정 시 `company.ts`에 입력하면 UI와 JSON-LD 구조화 데이터에 동시에 자동 반영됩니다.
+- **SEO 및 브라우저 자동 검수 (`scripts/verify-seo.mjs`)**: GitHub Pages 경로로 빌드한 뒤 정적 HTML, 로컬 HTTP 응답, 무자바스크립트(No-JS) 본문/내비게이션, 모바일 메뉴, canonical, 404 복구 및 `?seo=1` 인스펙터 동작을 자동 검증합니다. (참고: GitHub Pages 서브경로 배포 환경에서는 루트 도메인 연결 전까지 도메인 루트의 `robots.txt`가 우선 적용되며, 정식 루트 도메인 연결 시 생성된 `robots.txt`가 즉시 작동합니다.)

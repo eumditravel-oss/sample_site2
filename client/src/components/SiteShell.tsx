@@ -1,3 +1,4 @@
+import { SeoInspector } from "@/components/SeoInspector";
 import { company } from "@/config/company";
 import { assetPath } from "@/lib/assets";
 import { ArrowUp, ArrowUpRight, ChevronDown, Menu, X } from "lucide-react";
@@ -273,7 +274,7 @@ export function SiteFooter() {
     <footer className="s2-footer">
       <div className="s2-footer__cta">
         <figure>
-          <img src={assetPath("field-01.jpg")} alt="" />
+          <img src={assetPath("field-01.jpg")} alt="광역 도로 및 교량 기반시설 토목 시공 전경" loading="lazy" decoding="async" />
         </figure>
         <div>
           <p>PROJECT CONSULTATION</p>
@@ -385,6 +386,7 @@ export function SiteFrame({ children }: { children: ReactNode }) {
       </noscript>
       <main id="main-content">{children}</main>
       <SiteFooter />
+      <SeoInspector />
     </div>
   );
 }

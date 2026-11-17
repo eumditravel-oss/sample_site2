@@ -169,6 +169,8 @@ export default function Home() {
               className={index === heroIndex ? "is-active" : ""}
               src={assetPath(slide.image)}
               alt=""
+              fetchPriority={index === 0 ? "high" : "auto"}
+              decoding="async"
               aria-hidden={index !== heroIndex}
             />
           ))}
@@ -305,7 +307,7 @@ export default function Home() {
               aria-current={index === projectIndex % 3 ? "true" : undefined}
             >
               <figure>
-                <img src={assetPath(project.thumbnail)} alt="" />
+                <img src={assetPath(project.thumbnail)} alt={`${project.title} 현장 이미지`} loading="lazy" decoding="async" />
                 <span>{project.code}</span>
               </figure>
               <div>
@@ -367,7 +369,7 @@ export default function Home() {
         <div>
           <Link href="/quality">
             <figure>
-              <img src={assetPath("field-03.jpg")} alt="" />
+              <img src={assetPath("field-03.jpg")} alt="현장 구조물 도면 대조 및 품질·안전 검측 장면" loading="lazy" decoding="async" />
             </figure>
             <small>
               <ShieldCheck size={14} aria-hidden="true" /> 01 / QHSE STANDARD
@@ -380,7 +382,7 @@ export default function Home() {
           </Link>
           <Link href="/contact">
             <figure>
-              <img src={assetPath("field-04.jpg")} alt="" />
+              <img src={assetPath("field-04.jpg")} alt="스마트 물류 및 산업시설 신축 건축물 전경" loading="lazy" decoding="async" />
             </figure>
             <small>
               <Compass size={14} aria-hidden="true" /> 02 / PROJECT INQUIRY

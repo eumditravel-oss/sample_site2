@@ -63,7 +63,7 @@ export default function Projects() {
           {visibleProjects.map((project, index) => (
             <article key={project.id}>
               <figure>
-                <img src={assetPath(project.thumbnail)} alt="" />
+                <img src={assetPath(project.thumbnail)} alt={`${project.title} 수행역량 이미지`} loading="lazy" decoding="async" />
                 <span>{project.code}</span>
               </figure>
               <div>

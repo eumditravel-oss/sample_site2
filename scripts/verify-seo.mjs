@@ -7,7 +7,7 @@ import { createServer as createViteServer } from "vite";
 
 // Run after a GitHub Pages build (GITHUB_ACTIONS=true). CHROME_BIN is optional.
 const vite = await createViteServer({ server: { middlewareMode: true }, appType: "custom", mode: "production" });
-const { seoPages, seoAliases, seoForPath, siteUrl } = await vite.ssrLoadModule("/src/config/seo.ts");
+const { seoPages, seoAliases, seoForPath, indexableRoutes, siteUrl } = await vite.ssrLoadModule("/src/config/seo.ts");
 await vite.close();
 const routes = [...Object.keys(seoPages), ...Object.keys(seoAliases)];
 const source = await readFile("client/src/App.tsx", "utf8");
@@ -29,7 +29,7 @@ const http = createHttpServer(async (req, res) => {
     }
     const body = await readFile(target);
     const ext = path.extname(target);
-    const types = { ".html": "text/html; charset=utf-8", ".js": "text/javascript", ".css": "text/css", ".svg": "image/svg+xml", ".png": "image/png", ".xml": "application/xml" };
+    const types = { ".html": "text/html; charset=utf-8", ".js": "text/javascript", ".css": "text/css", ".svg": "image/svg+xml", ".png": "image/png", ".jpg": "image/jpeg", ".xml": "application/xml", ".txt": "text/plain; charset=utf-8" };
     res.writeHead(200, { "Content-Type": types[ext] ?? "application/octet-stream" });
     res.end(body);
   } catch {
@@ -56,13 +56,25 @@ try {
     assert.ok(head.includes(`<meta name="description" content="${seo.description}"`), `${route} has page description`);
     assert.deepEqual([...head.matchAll(/<link rel="canonical" href="([^"]+)"/g)].map(match => match[1]), [seo.url], `${route} has one correct canonical`);
     assert.ok(head.includes(`<meta property="og:url" content="${seo.url}"`), `${route} has correct social URL`);
+    assert.ok(head.includes(`<meta name="robots" content="${seo.robots}"`), `${route} has expected robots directive`);
     assert.ok(head.includes('rel="icon" href="/sample_site2/favicon.png" type="image/png" sizes="192x192"'), `${route} uses the square favicon under the Pages base path`);
     const json = head.match(/<script id="seo-structured-data" type="application\/ld\+json">(.*?)<\/script>/)?.[1];
     assert.ok(json, `${route} has JSON-LD`);
     const graph = JSON.parse(json)["@graph"];
     assert.equal(graph.find(item => item["@type"] === "WebPage")?.url, seo.url, `${route} structured data agrees with canonical`);
+    assert.ok(graph.find(item => item["@type"] === "GeneralContractor"), `${route} structured data includes GeneralContractor`);
+    assert.ok(graph.find(item => item["@type"] === "BreadcrumbList"), `${route} structured data includes BreadcrumbList`);
   }
+
   const sitemap = await (await fetch(`${base}sitemap.xml`)).text();
+  const rssResponse = await fetch(`${base}rss.xml`);
+  assert.equal(rssResponse.status, 200, "rss.xml returns HTTP 200");
+  assert.ok((await rssResponse.text()).includes("<rss version=\"2.0\""), "rss.xml is valid RSS 2.0");
+
+  const robotsResponse = await fetch(`${base}robots.txt`);
+  assert.equal(robotsResponse.status, 200, "robots.txt returns HTTP 200");
+  assert.ok((await robotsResponse.text()).includes(`Sitemap: ${siteUrl}sitemap.xml`), "robots.txt references sitemap.xml");
+
   const faviconResponse = await fetch(`${base}favicon.png`);
   assert.equal(faviconResponse.status, 200, "favicon returns HTTP 200");
   assert.equal(faviconResponse.headers.get("content-type"), "image/png");
@@ -70,6 +82,7 @@ try {
   assert.equal(png.subarray(0, 8).toString("hex"), "89504e470d0a1a0a", "favicon is PNG");
   assert.equal(png.readUInt32BE(16), 192, "favicon width");
   assert.equal(png.readUInt32BE(20), 192, "favicon height");
+
   const symbolPaths = text => [...text.matchAll(/<path\b[^>]*fill="url\(#dongseong-symbol-gradient\)"[^>]*>/g)].map(([tag]) => ({
     d: tag.match(/\bd="([^"]*)"/)?.[1], transform: tag.match(/\btransform="([^"]*)"/)?.[1],
   }));
@@ -77,19 +90,21 @@ try {
   const iconSource = await readFile("client/public/favicon-symbol.svg", "utf8");
   assert.equal(symbolPaths(iconSource).length, 3, "symbol has three original paths");
   assert.deepEqual(symbolPaths(iconSource), symbolPaths(originalLogo), "symbol paths and transforms match the original logo");
+
   const sitemapUrls = [...sitemap.matchAll(/<loc>(.*?)<\/loc>/g)].map(match => match[1]);
-  assert.deepEqual(sitemapUrls, Object.keys(seoPages).map(route => seoForPath(route).url), "sitemap contains canonical routes only");
+  assert.deepEqual(sitemapUrls, indexableRoutes().map(route => seoForPath(route).url), "sitemap contains indexable canonical routes only");
   for (const url of sitemapUrls) {
     assert.ok(url.startsWith(siteUrl));
     const response = await fetch(`${base}${url.slice(siteUrl.length)}`);
     assert.equal(response.status, 200, `sitemap URL ${url} must exist`);
   }
+
   const missing = await fetch(`${base}this-page-does-not-exist/`);
   assert.equal(missing.status, 404);
   const errorHtml = await missing.text();
   assert.ok(errorHtml.includes('name="robots" content="noindex,follow"') && errorHtml.includes("요청한 페이지를"));
   assert.ok(!errorHtml.includes('rel="canonical"'), "404 does not claim a canonical URL");
-  console.log(`PASS ${routes.length} route documents, ${sitemapUrls.length} sitemap URLs, JSON-LD, and 404 response`);
+  console.log(`PASS ${routes.length} route documents, ${sitemapUrls.length} sitemap URLs, rss.xml, robots.txt, JSON-LD, and 404 response`);
 
   browser = await chromium.launch({ executablePath: process.env.CHROME_BIN ?? "C:/Program Files/Google/Chrome/Application/chrome.exe", headless: true });
   const noScript = await browser.newContext({ javaScriptEnabled: false, viewport: { width: 390, height: 844 } });
@@ -144,10 +159,14 @@ try {
   assert.equal(await page.locator('meta[name="robots"]').getAttribute("content"), "noindex,follow");
   await page.getByRole("link", { name: "메인으로 돌아가기" }).click();
   await page.waitForFunction(() => document.title.startsWith("도시의 기반"));
-  assert.equal(await page.locator('meta[name="robots"]').getAttribute("content"), "index,follow", "client navigation restores indexing after 404");
+  assert.ok((await page.locator('meta[name="robots"]').getAttribute("content"))?.startsWith("index,follow"), "client navigation restores indexing after 404");
   assert.equal(await page.locator('link[rel="canonical"]').getAttribute("href"), siteUrl);
+
+  // Verify built-in ?seo=1 management inspector opens cleanly
+  await page.goto(`${base}?seo=1`, { waitUntil: "domcontentloaded" });
+  await page.getByRole("complementary", { name: "SEO 실시간 관리 및 진단 패널" }).waitFor({ state: "visible" });
   await context.close();
-  console.log("PASS no-JavaScript content/navigation and JavaScript menu, navigation, canonical and 404 recovery");
+  console.log("PASS no-JavaScript content/navigation, JavaScript menu, canonical, 404 recovery, and ?seo=1 inspector");
 } finally {
   await browser?.close();
   await new Promise(resolve => http.close(resolve));
