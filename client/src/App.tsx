@@ -3,12 +3,14 @@ import { InquiryDraftProvider } from "@/context/InquiryDraft";
 import Business from "@/pages/Business";
 import Company from "@/pages/Company";
 import Contact from "@/pages/Contact";
+import EmailPolicy from "@/pages/EmailPolicy";
 import Home from "@/pages/Home";
 import News from "@/pages/News";
 import NotFound from "@/pages/NotFound";
 import Privacy from "@/pages/Privacy";
 import Projects from "@/pages/Projects";
 import Quality from "@/pages/Quality";
+import Terms from "@/pages/Terms";
 import { Route, Router, Switch } from "wouter";
 
 function Routes() {
@@ -27,8 +29,10 @@ function Routes() {
       <Route path="/news" component={News} />
       <Route path="/contact" component={Contact} />
       <Route path="/privacy" component={Privacy} />
+      <Route path="/terms" component={Terms} />
+      <Route path="/email-policy" component={EmailPolicy} />
 
-      {/* Legacy URLs remain readable but render the new SITE 2 information architecture. */}
+      {/* Legacy URLs remain readable and map cleanly to canonical sections. */}
       <Route path="/services" component={Business} />
       <Route path="/services/scope" component={Business} />
       <Route path="/services/promise" component={Quality} />
@@ -49,7 +53,9 @@ export default function App({ ssrPath }: { ssrPath?: string }) {
   return (
     <ErrorBoundary>
       <Router base={base} ssrPath={ssrPath}>
-        <InquiryDraftProvider><Routes /></InquiryDraftProvider>
+        <InquiryDraftProvider>
+          <Routes />
+        </InquiryDraftProvider>
       </Router>
     </ErrorBoundary>
   );
